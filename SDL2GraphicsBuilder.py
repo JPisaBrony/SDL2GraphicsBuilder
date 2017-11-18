@@ -3,7 +3,7 @@ from pygame.locals import *
 from sdl2code import *
 import subprocess
 
-WINDOW_WIDTH = 800
+WINDOW_WIDTH = 960
 WINDOW_HEIGHT = 600
 GUI_WIDTH = 160
 GUI_START_X = WINDOW_WIDTH - GUI_WIDTH
@@ -14,6 +14,7 @@ delTool = (GUI_START_X + 20, 120, GUI_WIDTH * 2 / 3, 30)
 moveTool = (GUI_START_X + 20, 200, GUI_WIDTH * 2 / 3, 30)
 toolState = 1
 selRect = -1
+createRect = -1
 clickOccured = False
 
 pygame.init()
@@ -99,29 +100,12 @@ while True:
         pygame.draw.rect(window, white, moveTool)
 
     if clickOccured:
-        if toolState != 1:
-            rectStartx = -1
-            rectStarty = -1
-
         if toolState == 1:
             if rectStartx == -1 and rectStarty == -1:
                 rectStartx = mousex
                 rectStarty = mousey
             else:
-                rectX = rectStartx
-                rectY = rectStarty
-                rectW = mousex - rectStartx
-                rectH = mousey - rectStarty
-                
-                if rectX > mousex:
-                    rectX = mousex
-                    rectW = rectStartx - mousex
-                if rectY > mousey:
-                    rectY = mousey
-                    rectH = rectStarty - mousey
-                    
-                rect = [rectX, rectY, rectW, rectH]
-                rects.append(rect)
+                rects.append(createRect)
                 rectStartx = -1
                 rectStarty = -1
         elif toolState == 2:
@@ -142,6 +126,26 @@ while True:
             yOff = mousey - selRect[1]
         selRect[0] = mousex - xOff
         selRect[1] = mousey - yOff
+    
+    if toolState != 1:
+        rectStartx = -1
+        rectStarty = -1
+
+    if rectStartx != -1 and rectStarty != -1:
+        rectX = rectStartx
+        rectY = rectStarty
+        rectW = mousex - rectStartx
+        rectH = mousey - rectStarty
+        
+        if rectX > mousex:
+            rectX = mousex
+            rectW = rectStartx - mousex
+        if rectY > mousey:
+            rectY = mousey
+            rectH = rectStarty - mousey
+
+        createRect = [rectX, rectY, rectW, rectH]
+        pygame.draw.rect(window, white, createRect)
 
     clickOccured = False
 
